@@ -1,0 +1,15 @@
+::ng-deep ngb-modal-backdrop {
+    z-index: 1050 !important;
+  }
+
+  .container {
+    height: 100vh;
+  }
+  
+  .left {
+    background-color: lightgray;
+  }
+  
+  .right {
+    background-color: beige;
+  }
