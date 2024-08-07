@@ -1,0 +1,66 @@
+
+<h2 mat-dialog-title>Install Angular</h2>
+<mat-dialog-content class="mat-typography">
+  <h3>Develop across all platforms</h3>
+
+  <form [formGroup]="replayEpisodeForm">
+
+
+    <mat-form-field>
+      <mat-label>Name Program</mat-label>
+      <input matInput formControlName="nameProgram" id="nameProgram">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Special Guests</mat-label>
+      <input matInput formControlName="specialGuests" id="specialGuests">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Date Ori</mat-label>
+      <input matInput [matDatepicker]="picker2" formControlName="dateOri" id="dateOri">
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Hour Original</mat-label>
+      <input matInput formControlName="hourOriginal" id="hourOriginal" mask="00:00">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Duration</mat-label>
+      <input matInput formControlName="duration" id="duration" mask="00:00">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Name Host</mat-label>
+        <input matInput formControlName="nameHost" id="nameHost" title="" placeholder="">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Date Replay Episode</mat-label>
+      <input matInput [matDatepicker]="picker1" formControlName="dateReplayEpisode" id="dateReplayEpisode">
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Number Replay Episode</mat-label>
+      <input matInput type="number" formControlName="numberReplayEpisode" id="numberReplayEpisode">
+    </mat-form-field>
+ 
+    <mat-form-field class="full-width">
+      <mat-label>Comments</mat-label>
+      <textarea matInput formControlName="comments" id="comments"></textarea>
+    </mat-form-field>
+
+
+  </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close (click)="onNoClick()">Cancel</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial [disabled]="!replayEpisodeForm.valid" (click)="onSaveClick()">Save</button>
+</mat-dialog-actions>

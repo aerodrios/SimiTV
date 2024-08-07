@@ -1,5 +1,5 @@
 //inHouse
-import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef, AfterViewInit,} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef, AfterViewInit, inject, } from '@angular/core';
 import { Subject } from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
@@ -14,6 +14,9 @@ import { environment } from '../environments/environment';
 import { SimiPrograms } from './interfaces/simi-programs';
 //Services
 import { SrvFireStoreService } from '../services/srv-fire-store.service';
+import { ReplayEpisode } from './interfaces/replay-episode';
+import { MatDialog } from '@angular/material/dialog';
+import { ReplayEpisodeDialogComponent } from './components/replay-episode-dialog/replay-episode-dialog.component';
 
 //Prueba DataTable
 
@@ -85,6 +88,50 @@ export const Programs: SimiPrograms[] = [
   { id: 7, name: 'ReencuentroconMéxico' }
 ];
 
+export class DialogContentExample {
+  readonly dialog = inject(MatDialog);
+}
+
+
+// const ELEMENT_DATA: ReplayEpisode[] = [
+//   {
+//     "hourOriginal": "00:00",
+//     "dateReplayEpisode": {
+//       "seconds": 1722814871,
+//       "nanoseconds": 480000000
+//     },
+//     "nameProgram": "ActosdeBondad",
+//     "nameHost": "Fernanda Tapia",
+//     "numberReplayEpisode": 2,
+//     "comments": "Comentario prueba-2",
+//     "id": "MNiq6TtAoaF7hI6dLzhn",
+//     "specialGuests": "Fernanda Tapia",
+//     "dateOri": {
+//       "seconds": 1722814883,
+//       "nanoseconds": 109000000
+//     },
+//     "duration": "2:00"
+//   },
+//   {
+//     "duration": "22:18",
+//     "numberReplayEpisode": 1,
+//     "nameHost": "Cardona y Aviña",
+//     "id": "nY6f63heJmr2tVYxhqvt",
+//     "dateOri": {
+//       "seconds": 1723142617,
+//       "nanoseconds": 853000000
+//     },
+//     "dateReplayEpisode": {
+//       "seconds": 1722969905,
+//       "nanoseconds": 259000000
+//     },
+//     "nameProgram": "SimiActualidad",
+//     "hourOriginal": "43:37",
+//     "comments": "Comment test",
+//     "specialGuests": "Meteorologist"
+//   }
+// ];
+
 
 @Component({
   selector: 'app-root',
@@ -109,8 +156,9 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
 
   //Pruebas
-  displayedColumns: string[] = ['id', 'name', 'progress', 'fruit'];
-  dataSource: MatTableDataSource<UserData>;
+  displayedColumns: string[] = ['nameProgram', 'nameHost', 'dateOri', 'specialGuests', 'actions'];
+
+  dataSource: MatTableDataSource<ReplayEpisode>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -192,16 +240,18 @@ export class AppComponent implements AfterViewInit {
 
   allSimiTvPrograms: any;
 
-  constructor(private modal: NgbModal, private service: SrvFireStoreService) {
+  constructor(private modal: NgbModal, private service: SrvFireStoreService, public dialog: MatDialog) {
     // Logs false for development environment
     console.log(environment); 
     this.getPrograms();
 
     // Create 100 users
-    const users = Array.from({length: 100}, (_, k) => createNewUser(k + 1));
+    //const users = Array.from({length: 100}, (_, k) => createNewUser(k + 1));
 
     // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(users);
+    // this.dataSource = new MatTableDataSource(users);
+    this.dataSource = new MatTableDataSource(this.allSimiTvPrograms);
+    
   }
 
 
@@ -276,8 +326,12 @@ export class AppComponent implements AfterViewInit {
 
 
   //Connect DB FireBase
-  async getPrograms() {
-    this.allSimiTvPrograms = await this.service.getAllPrograms();
+  getPrograms() {
+    this.allSimiTvPrograms =  this.service.getAllPrograms().subscribe((data: ReplayEpisode[]) => {
+      this.dataSource.data = data;
+      console.log(data);
+    });
+
     console.log(this.allSimiTvPrograms);
   }
 
@@ -291,9 +345,47 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
   }
+
+  printRow(row: any): void {
+    console.log(row);
+  }
+
+///////////////////////////////// Modal 
+
+// openDialog(): void {
+
+//   const dialogRef = this.dialog.open(ReplayEpisodeDialogComponent, {
+//     width: '400px',
+//     data: {} as ReplayEpisode
+//   });
+
+//   dialogRef.afterClosed().subscribe(result => {
+//     if (result) {
+//       this.service.addReplayEpisode(result).then(() => {
+//         this.dataSource.data = [...this.dataSource.data, result];
+//       });
+//     }
+//   });
+
+// }
+
+
+  openDialog() {
+    const dialogRef = this.dialog.open(ReplayEpisodeDialogComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.service.addReplayEpisode(result).then(() => {
+        this.dataSource.data = [...this.dataSource.data, result];
+      });
+    }
+    });
+
+  }
+
 
 }
 

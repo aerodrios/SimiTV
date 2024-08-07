@@ -1,0 +1,67 @@
+/* Container for the dialog content */
+.mat-dialog-content {
+  padding: 24px;
+  max-width: 600px; /* Adjust the max-width to a smaller value */
+  margin: 0 auto; /* Center the dialog */
+}
+
+/* Container for the dialog actions */
+.mat-dialog-actions {
+  justify-content: flex-end;
+}
+
+/* Style for the dialog title */
+.mat-dialog-title {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* Style for the form fields */
+.mat-form-field {
+  width: 100%;
+}
+
+/* Style for the input elements */
+input[matInput], textarea[matInput] {
+  padding: 10px;
+  font-size: 16px;
+}
+
+/* Style for the buttons */
+button[mat-button] {
+  margin: 8px 0;
+}
+
+/* Customize the Save button */
+button[mat-button].save-button {
+  background-color: #3f51b5;
+  color: #ffffff;
+}
+
+button[mat-button].save-button:hover {
+  background-color: #303f9f;
+}
+
+/* Customize the Cancel button */
+button[mat-button].cancel-button {
+  color: #f44336;
+}
+
+/* Grid container for the form */
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0; /* Add margin around the form */
+}
+
+/* Full width for certain fields */
+.full-width {
+  grid-column: span 2;
+}
+
+/* Style for the textarea */
+textarea[matInput] {
+  height: 100px; /* Adjust the height of the textarea */
+}
