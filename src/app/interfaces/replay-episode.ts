@@ -1,4 +1,5 @@
 export interface ReplayEpisode {
+    isEdit?: boolean; 
     hourOriginal: string;
     dateReplayEpisode: Date;
     nameProgram: string;

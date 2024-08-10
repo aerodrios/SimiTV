@@ -1,19 +1,26 @@
-import { importProvidersFrom, NgModule } from '@angular/core';
-import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import { NgModule,  } from '@angular/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule} from '@angular/common/http'
 import { Routes } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import {MatInputModule} from '@angular/material/input';
-import {MatTableModule} from '@angular/material/table';
-import {MatSortModule} from '@angular/material/sort';
+import { MatInputModule} from '@angular/material/input';
+import { MatTableModule} from '@angular/material/table';
+import { MatSortModule} from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MtxCalendarView, MtxDatetimepickerIntl, MtxDatetimepickerMode, MtxDatetimepickerModule, MtxDatetimepickerType, } from '@ng-matero/extensions/datetimepicker';
+import { provideMomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import { MtxDateFnsDatetimeModule } from '@ng-matero/extensions-date-fns-adapter';
+
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { LOCALE_ID } from '@angular/core';
 
 
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -32,11 +39,16 @@ import { AngularFireModule} from '@angular/fire/compat'
 import { AngularFirestoreModule} from '@angular/fire/compat/firestore';
 
 
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { ReplayEpisodeDialogComponent } from './components/replay-episode-dialog/replay-episode-dialog.component';
 import { SrvFireStoreService } from '../services/srv-fire-store.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
+
+import localeEs from '@angular/common/locales/es';
+import localeEsExtra from '@angular/common/locales/extra/es';
+
+registerLocaleData(localeEs, 'es-419', localeEsExtra);
 
 
 @NgModule({
@@ -71,12 +83,51 @@ import { SrvFireStoreService } from '../services/srv-fire-store.service';
     MatNativeDateModule,
     ReactiveFormsModule,
     MatDialogModule,
-   
+    MatOptionModule,
+    MatSelectModule,
+    MatIconModule,
+    MatCheckboxModule,
+    MatMomentDateModule,
+
+    MtxDatetimepickerModule,
+    MtxDateFnsDatetimeModule,
+
     NgxMaskModule.forRoot(),
 
   ],
-  providers: [ SrvFireStoreService, { provide: MAT_DATE_LOCALE, useValue: 'es-MX' } ],
+  exports:[
+    MtxDatetimepickerModule,
+    MtxDateFnsDatetimeModule,       
+  ],
+  providers: [ SrvFireStoreService, 
+    { provide: MAT_DATE_LOCALE, useValue: 'es-419' }, 
+    { provide: LOCALE_ID, useValue: "es-419" }, 
+    DatePipe,
+    
+    provideMomentDatetimeAdapter({
+      parse: {
+        dateInput: 'DD-MM-YYYY',
+        monthInput: 'MMMM',
+        yearInput: 'YYYY',
+        timeInput: 'HH:mm',
+        datetimeInput: 'DD-MM-YYYY HH:mm',
+      },
+      display: {
+        dateInput: 'DD-MM-YYYY',
+        monthInput: 'MMMM',
+        yearInput: 'YYYY',
+        timeInput: 'HH:mm',
+        datetimeInput: 'DD-MM-YYYY HH:mm',
+        monthYearLabel: 'MMMM YYYY',
+        dateA11yLabel: 'LL',
+        monthYearA11yLabel: 'YYYY MMMM ',
+        popupHeaderDateLabel: 'DD MMM, ddd',
+      },
+    }),
+      
+  ],
   bootstrap: [AppComponent],
+ 
   
 })
 export class AppModule { }

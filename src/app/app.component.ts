@@ -4,6 +4,8 @@ import { Subject } from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material/paginator';
+import { DatePipe } from '@angular/common';
+
 // 3rd Party´s
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours,} from 'date-fns';
@@ -77,16 +79,6 @@ const colors: Record<string, EventColor> = {
     secondary: '#FDF1BA',
   },
 };
-
-export const Programs: SimiPrograms[] = [
-  { id: 1, name: 'SimiActualidad' },
-  { id: 2, name: 'ActosdeBondad' },
-  { id: 3, name: 'SimiTrabajando' },
-  { id: 4, name: 'LaVidaesLucha' },
-  { id: 5, name: 'Ayudaresvivir' },
-  { id: 6, name: 'SimiPlaneta' },
-  { id: 7, name: 'ReencuentroconMéxico' }
-];
 
 export class DialogContentExample {
   readonly dialog = inject(MatDialog);
@@ -169,6 +161,9 @@ export class AppComponent implements AfterViewInit {
   CalendarView = CalendarView;
   viewDate: Date = new Date();
 
+  formattedDateReplayEpisode: string;
+  formattedDateOri: string;
+
   modalData: {
     action: string;
     event: CalendarEvent;
@@ -240,7 +235,7 @@ export class AppComponent implements AfterViewInit {
 
   allSimiTvPrograms: any;
 
-  constructor(private modal: NgbModal, private service: SrvFireStoreService, public dialog: MatDialog) {
+  constructor(private modal: NgbModal, private service: SrvFireStoreService, public dialog: MatDialog, private datePipe: DatePipe) {
     // Logs false for development environment
     console.log(environment); 
     this.getPrograms();
@@ -251,6 +246,7 @@ export class AppComponent implements AfterViewInit {
     // Assign the data to the data source for the table to render
     // this.dataSource = new MatTableDataSource(users);
     this.dataSource = new MatTableDataSource(this.allSimiTvPrograms);
+    
     
   }
 
@@ -353,25 +349,9 @@ export class AppComponent implements AfterViewInit {
     console.log(row);
   }
 
+
+
 ///////////////////////////////// Modal 
-
-// openDialog(): void {
-
-//   const dialogRef = this.dialog.open(ReplayEpisodeDialogComponent, {
-//     width: '400px',
-//     data: {} as ReplayEpisode
-//   });
-
-//   dialogRef.afterClosed().subscribe(result => {
-//     if (result) {
-//       this.service.addReplayEpisode(result).then(() => {
-//         this.dataSource.data = [...this.dataSource.data, result];
-//       });
-//     }
-//   });
-
-// }
-
 
   openDialog() {
     const dialogRef = this.dialog.open(ReplayEpisodeDialogComponent);
@@ -386,6 +366,28 @@ export class AppComponent implements AfterViewInit {
 
   }
 
+  openEditDialog(episode: any): void {
+    const dialogRef = this.dialog.open(ReplayEpisodeDialogComponent, {
+      width: '700px',
+      data: { ...episode, isEdit: true }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.service.updateReplayEpisode(episode.id, result).then(() => {
+          this.getPrograms(); // Reload data after update
+        });
+      }
+    });
+  }
+
+  deleteRecord(id: string): void {
+    this.service.deleteReplayEpisode(id).then(() => {
+      this.getPrograms(); // Reload data after delete
+    }).catch(error => {
+      console.error('Error deleting record: ', error);
+    });
+  }
 
 }
 

@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
+
 
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { ReplayEpisode } from '../app/interfaces/replay-episode';
 import { Timestamp } from 'firebase/firestore';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SrvFireStoreService {
 
-  constructor(private db: AngularFirestore) { }
+  formattedDateReplayEpisode: string;
+  formattedDateOri: string;
+
+  constructor(private db: AngularFirestore, private datePipe: DatePipe) { }
 
 
   // getAllPrograms() {
@@ -32,8 +37,19 @@ export class SrvFireStoreService {
         return {
           ...data,
           nameHost: decodeURIComponent(data.nameHost),
-          dateReplayEpisode: (data.dateReplayEpisode as Timestamp).toDate(),
-          dateOri: (data.dateOri as Timestamp).toDate(),
+
+          // formattedDateReplayEpisode: this.datePipe.transform(program.dateReplayEpisode, 'dd-MM-yyyy HH:mm:ss'),
+          // formattedDateOri: this.datePipe.transform(program.dateOri, 'dd-MM-yyyy HH:mm:ss')
+
+
+          // formattedDateReplayEpisode: this.datePipe.transform((data.dateReplayEpisode as Timestamp).toDate(), 'dd-MM-yyyy HH:mm:ss'),
+          // formattedDateOri: this.datePipe.transform((data.dateOri as Timestamp).toDate(), 'dd-MM-yyyy HH:mm:ss'),
+
+          dateOri: this.datePipe.transform((data.dateOri as Timestamp).toDate(), 'dd-MM-yyyy HH:mm:ss'),
+          dateReplayEpisode: this.datePipe.transform((data.dateReplayEpisode as Timestamp).toDate(), 'dd-MM-yyyy HH:mm:ss'),
+
+
+
         } as ReplayEpisode;
       }))
     );
@@ -42,6 +58,14 @@ export class SrvFireStoreService {
 
   addReplayEpisode(replayEpisode: ReplayEpisode) {
     return this.db.collection('simiTvPrograms').add(replayEpisode);
+  }
+
+  updateReplayEpisode(id: string, episode: ReplayEpisode): Promise<void> {
+    return this.db.collection('simiTvPrograms').doc(id).update(episode);
+  }
+
+  deleteReplayEpisode(id: string): Promise<void> {
+    return this.db.collection('simiTvPrograms').doc(id).delete();
   }
 
 

@@ -1,5 +1,14 @@
 
-<h2 mat-dialog-title>Install Angular</h2>
+<h2 mat-dialog-title>
+  <div class="dialog-actions">
+    <span class="dialog-title">{{dialogTitle}}</span>
+    <button mat-button class="cancel-button" (click)="onNoClick()">Cancel</button>
+    <button mat-button class="save-button" [disabled]="!replayEpisodeForm.valid" (click)="onSaveClick()">Save</button>
+    <!-- <button mat-button class="save-button" (click)="onSaveClick()">Save</button> -->
+  </div>
+</h2>
+
+
 <mat-dialog-content class="mat-typography">
   <h3>Develop across all platforms</h3>
 
@@ -8,7 +17,11 @@
 
     <mat-form-field>
       <mat-label>Name Program</mat-label>
-      <input matInput formControlName="nameProgram" id="nameProgram">
+      <mat-select formControlName="nameProgram" id="nameProgram">
+        <mat-option *ngFor="let program of programs" [value]="program.name">
+          {{ program.name }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
     <mat-form-field>
@@ -17,10 +30,21 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Date Ori</mat-label>
-      <input matInput [matDatepicker]="picker2" formControlName="dateOri" id="dateOri">
-      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-      <mat-datepicker #picker2></mat-datepicker>
+  
+      <mtx-datetimepicker #datetimePicker
+                    [type]="type"
+                    [mode]="mode"
+                    [multiYearSelector]="multiYearSelector"
+                    [startView]="startView"
+                    [twelvehour]="twelvehour"
+                    [timeInterval]="timeInterval"
+                    [timeInput]="timeInput"
+                    #picker1
+                  >
+      </mtx-datetimepicker>
+      <input [mtxDatetimepicker]="picker1" formControlName="dateOri" id="dateOri" matInput required>
+      <mtx-datetimepicker-toggle [for]="picker1" matSuffix></mtx-datetimepicker-toggle>
+
     </mat-form-field>
 
     <mat-form-field>
@@ -39,10 +63,26 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Date Replay Episode</mat-label>
+      
+      <!-- <mat-label>Date Replay Episode</mat-label>
       <input matInput [matDatepicker]="picker1" formControlName="dateReplayEpisode" id="dateReplayEpisode">
       <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-      <mat-datepicker #picker1></mat-datepicker>
+      <mat-datepicker #picker1></mat-datepicker> -->
+      <mtx-datetimepicker #datetimePicker
+      [type]="type"
+      [mode]="mode"
+      [multiYearSelector]="multiYearSelector"
+      [startView]="startView"
+      [twelvehour]="twelvehour"
+      [timeInterval]="timeInterval"
+      [timeInput]="timeInput"
+      #picker2
+    >
+    </mtx-datetimepicker>
+    <input [mtxDatetimepicker]="picker2" formControlName="dateReplayEpisode" id="dateReplayEpisode" matInput required>
+    <mtx-datetimepicker-toggle [for]="picker2" matSuffix></mtx-datetimepicker-toggle>
+
+
     </mat-form-field>
 
     <mat-form-field>
@@ -60,7 +100,4 @@
 
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close (click)="onNoClick()">Cancel</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial [disabled]="!replayEpisodeForm.valid" (click)="onSaveClick()">Save</button>
-</mat-dialog-actions>
+

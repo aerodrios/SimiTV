@@ -264,7 +264,8 @@
               <!-- Name Column -->
               <ng-container matColumnDef="dateOri">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
-                <td mat-cell *matCellDef="let row"> {{row.dateOri | date: 'dd-MM-yyyy HH:mm' }} </td>
+                <!-- <td mat-cell *matCellDef="let row"> {{row.dateOri | date: 'dd-MM-yyyy HH:mm' }} </td> -->
+                <td mat-cell *matCellDef="let row"> {{row.dateOri}} </td>
               </ng-container>
           
               <!-- Fruit Column -->
@@ -275,8 +276,15 @@
 
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef> Actions </th>
-                <td mat-cell *matCellDef="let element">
-                  <button mat-button (click)="printRow(element)">Print</button>
+                <td mat-cell *matCellDef="let row">
+                  <div class="dvBtnAct">
+                    <button mat-icon-button color="primary" (click)="openEditDialog(row)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteRecord(row.id)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
                 </td>
               </ng-container>
           
