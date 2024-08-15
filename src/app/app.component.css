@@ -44,3 +44,25 @@
     display: flex;
     flex-direction: row;
   }
+
+
+/* Styles to images day */
+  .custom-cell {
+    position: relative;
+    text-align: center;
+  }
+  
+  .custom-cell .event-image {
+    width: 100%;
+    height: auto;
+    opacity: 0.8; /* Adjust the transparency if needed */
+  }
+  
+  .custom-cell .day-number {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-weight: bold;
+    color: white; /* Adjust according to your design */
+  }
+  

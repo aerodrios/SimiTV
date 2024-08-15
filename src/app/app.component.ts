@@ -20,49 +20,6 @@ import { ReplayEpisode } from './interfaces/replay-episode';
 import { MatDialog } from '@angular/material/dialog';
 import { ReplayEpisodeDialogComponent } from './components/replay-episode-dialog/replay-episode-dialog.component';
 
-//Prueba DataTable
-
-export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  fruit: string;
-}
-
-/** Constants used to fill up our data base. */
-const FRUITS: string[] = [
-  'blueberry',
-  'lychee',
-  'kiwi',
-  'mango',
-  'peach',
-  'lime',
-  'pomegranate',
-  'pineapple',
-];
-const NAMES: string[] = [
-  'Maia',
-  'Asher',
-  'Olivia',
-  'Atticus',
-  'Amelia',
-  'Jack',
-  'Charlotte',
-  'Theodore',
-  'Isla',
-  'Oliver',
-  'Isabella',
-  'Jasper',
-  'Cora',
-  'Levi',
-  'Violet',
-  'Arthur',
-  'Mia',
-  'Thomas',
-  'Elizabeth',
-];
-
-//***********************************************/
 
 //CONSTS
 const colors: Record<string, EventColor> = {
@@ -83,46 +40,6 @@ const colors: Record<string, EventColor> = {
 export class DialogContentExample {
   readonly dialog = inject(MatDialog);
 }
-
-
-// const ELEMENT_DATA: ReplayEpisode[] = [
-//   {
-//     "hourOriginal": "00:00",
-//     "dateReplayEpisode": {
-//       "seconds": 1722814871,
-//       "nanoseconds": 480000000
-//     },
-//     "nameProgram": "ActosdeBondad",
-//     "nameHost": "Fernanda Tapia",
-//     "numberReplayEpisode": 2,
-//     "comments": "Comentario prueba-2",
-//     "id": "MNiq6TtAoaF7hI6dLzhn",
-//     "specialGuests": "Fernanda Tapia",
-//     "dateOri": {
-//       "seconds": 1722814883,
-//       "nanoseconds": 109000000
-//     },
-//     "duration": "2:00"
-//   },
-//   {
-//     "duration": "22:18",
-//     "numberReplayEpisode": 1,
-//     "nameHost": "Cardona y Aviña",
-//     "id": "nY6f63heJmr2tVYxhqvt",
-//     "dateOri": {
-//       "seconds": 1723142617,
-//       "nanoseconds": 853000000
-//     },
-//     "dateReplayEpisode": {
-//       "seconds": 1722969905,
-//       "nanoseconds": 259000000
-//     },
-//     "nameProgram": "SimiActualidad",
-//     "hourOriginal": "43:37",
-//     "comments": "Comment test",
-//     "specialGuests": "Meteorologist"
-//   }
-// ];
 
 
 @Component({
@@ -153,8 +70,6 @@ export class AppComponent implements AfterViewInit {
   dataSource: MatTableDataSource<ReplayEpisode>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
-
 
   //Declarations
   view: CalendarView = CalendarView.Month;
@@ -230,24 +145,23 @@ export class AppComponent implements AfterViewInit {
     },
   ];
 
+
+ 
+
+  objCalendarObj : CalendarEvent[];
+
+
+
+
+
   activeDayIsOpen: boolean = true;
 
 
   allSimiTvPrograms: any;
 
   constructor(private modal: NgbModal, private service: SrvFireStoreService, public dialog: MatDialog, private datePipe: DatePipe) {
-    // Logs false for development environment
-    console.log(environment); 
     this.getPrograms();
-
-    // Create 100 users
-    //const users = Array.from({length: 100}, (_, k) => createNewUser(k + 1));
-
-    // Assign the data to the data source for the table to render
-    // this.dataSource = new MatTableDataSource(users);
     this.dataSource = new MatTableDataSource(this.allSimiTvPrograms);
-    
-    
   }
 
 
@@ -268,11 +182,7 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  eventTimesChanged({
-    event,
-    newStart,
-    newEnd,
-  }: CalendarEventTimesChangedEvent): void {
+  eventTimesChanged({event, newStart, newEnd,}: CalendarEventTimesChangedEvent): void {
     this.events = this.events.map((iEvent) => {
       if (iEvent === event) {
         return {
@@ -286,46 +196,69 @@ export class AppComponent implements AfterViewInit {
     this.handleEvent('Dropped or resized', event);
   }
 
-  handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
-  }
 
-  addEvent(): void {
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color: colors["red"],
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
-      },
-    ];
-  }
 
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
-  }
+  // addEvent(): void {
+  //   this.events = [
+  //     ...this.events,
+  //     {
+  //       title: 'New event',
+  //       start: startOfDay(new Date()),
+  //       end: endOfDay(new Date()),
+  //       color: colors["red"],
+  //       draggable: true,
+  //       resizable: {
+  //         beforeStart: true,
+  //         afterEnd: true,
+  //       },
+  //     },
+  //   ];
+  // }
+
+  // deleteEvent(eventToDelete: CalendarEvent) {
+  //   this.events = this.events.filter((event) => event !== eventToDelete);
+  // }
 
   setView(view: CalendarView) {
     this.view = view;
   }
 
+
+
+  
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
+
+  handleEvent(action: string, event: CalendarEvent): void {
+    this.modalData = { event, action };
+    this.modal.open(this.modalContent, { size: 'lg' });
+  }
+
+
+
+
+
+
+
+
+
 
 
   //Connect DB FireBase
   getPrograms() {
     this.allSimiTvPrograms =  this.service.getAllPrograms().subscribe((data: ReplayEpisode[]) => {
+      
+      data.sort((a, b) => {
+        const dateA = this.parseDateString(a.dateOri.toString());
+        const dateB = this.parseDateString(b.dateOri.toString());
+        return dateB.getTime() - dateA.getTime();
+      });
+
       this.dataSource.data = data;
-      console.log(data);
+      this.dataSource.paginator = this.paginator;
+
+      this.objCalendarObj = this.convertReplayEpisodesToCalendarEventsV2(data);
     });
 
     console.log(this.allSimiTvPrograms);
@@ -340,14 +273,101 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
+
+  // convertReplayEpisodesToCalendarEvents = (replayEpisodes: ReplayEpisode[]): CalendarEvent[] => {
+  //   return replayEpisodes.map(episode => {
+  //     return {
+  //       id: episode.id,
+  //       start: episode.dateOri,
+  //       end: episode.dateReplayEpisode,
+  //       title: episode.nameProgram,
+  //       color: { ...colors["red"] },
+  //       actions: [
+  //         {
+  //           label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+  //           a11yLabel: 'Edit',
+  //           onClick: ({ event }: { event: CalendarEvent }): void => {
+  //             this.handleEvent('Edited', event);
+  //           },
+  //         },
+  //         {
+  //           label: '<i class="fas fa-fw fa-trash-alt"></i>',
+  //           a11yLabel: 'Delete',
+  //           onClick: ({ event }: { event: CalendarEvent }): void => {
+  //             this.events = this.events.filter((iEvent) => iEvent !== event);
+  //             this.handleEvent('Deleted', event);
+  //           },
+  //         },
+  //       ],
+  //       allDay: true,
+  //       resizable: {
+  //         beforeStart: true,
+  //         afterEnd: true,
+  //       },
+  //       draggable: true,
+  //       meta: {
+  //       //   hostname: episode.nameHost,
+  //       //   numberReplayEpisode: episode.numberReplayEpisode,
+  //       //   comments: episode.comments,
+  //       //   specialGuests: episode.specialGuests,
+  //       //   isEdit: episode.isEdit
+  //       }
+  //     } as CalendarEvent<ReplayEpisode>;
+  //   });
+  // };
+
+   convertReplayEpisodesToCalendarEventsV2 = (replayEpisodes: ReplayEpisode[]): CalendarEvent<ReplayEpisode>[] => {
+    return replayEpisodes.map(episode => {
+
+        return {
+        id: episode.id,
+        start: this.convertToDate(episode.dateOri.toString()),
+        end: this.convertToDate(episode.dateReplayEpisode.toString()),
+        title: episode.nameProgram,
+        color: { ...colors["red"] },
+        actions: [
+          {
+            label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+            a11yLabel: 'Edit',
+            onClick: ({ event }: { event: CalendarEvent }): void => {
+              //this.handleEvent('Edited', event);
+              this.openEditDialogCalendar(event)
+            },
+          },
+          {
+            label: '<i class="fas fa-fw fa-trash-alt"></i>',
+            a11yLabel: 'Delete',
+            onClick: ({ event }: { event: CalendarEvent }): void => {
+              this.events = this.events.filter((iEvent) => iEvent !== event);
+              this.handleEvent('Deleted', event);
+            },
+          },
+        ],
+        allDay: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true,
+        },
+        draggable: true,
+        meta: {
+          nameHost: episode.nameHost,
+          numberReplayEpisode: episode.numberReplayEpisode,
+          comments: episode.comments,
+          specialGuests: episode.specialGuests,
+          isEdit: episode.isEdit
+        },
+        imageUrl: './../../assets/azteca1.png'
+      } as CalendarEvent<ReplayEpisode>;
+    });
+  };
+  
   ngAfterViewInit() {
+  
     // this.dataSource.paginator = this.paginator;
     // this.dataSource.sort = this.sort;
   }
 
-  printRow(row: any): void {
-    console.log(row);
-  }
+
 
 
 
@@ -381,6 +401,24 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
+  openEditDialogCalendar(episode: any): void {
+
+    let elemetEpisode = this.dataSource.data.find(ep => ep.id === episode.id);
+
+    const dialogRef = this.dialog.open(ReplayEpisodeDialogComponent, {
+      width: '700px',
+      data: { ...elemetEpisode, isEdit: true }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.service.updateReplayEpisode(episode.id, result).then(() => {
+          this.getPrograms(); // Reload data after update
+        });
+      }
+    });
+  }
+
   deleteRecord(id: string): void {
     this.service.deleteReplayEpisode(id).then(() => {
       this.getPrograms(); // Reload data after delete
@@ -389,19 +427,45 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-}
+  parseDateString(dateString: string): Date {
+    const [day, month, year, hours, minutes, seconds] = dateString.split(/[- :]/).map(Number);
+    return new Date(year, month - 1, day, hours, minutes, seconds);
+  }
 
-function createNewUser(id: number): UserData {
-  const name =
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))] +
-    ' ' +
-    NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) +
-    '.';
-
-  return {
-    id: id.toString(),
-    name: name,
-    progress: Math.round(Math.random() * 100).toString(),
-    fruit: FRUITS[Math.round(Math.random() * (FRUITS.length - 1))],
+   convertToDate = (dateString: string): Date => {
+    const [datePart, timePart] = dateString.split(' ');
+    const [day, month, year] = datePart.split('-').map(Number);
+    const [hours, minutes, seconds] = timePart.split(':').map(Number);
+    return new Date(year, month - 1, day, hours, minutes, seconds);
   };
+
+  getDayFromDate(dateString: string): number {
+    const date = new Date(dateString);
+    return date.getDate(); // Returns the day of the month (1-31)
+  }
+
+  
+  hasEvents(day: Date): boolean {
+    return this.objCalendarObj?.some(event => this.isSameDay(day, event.start));
+  }
+  isSameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
+  }
+  
+  // getEventsForDay(day: Date): CalendarEvent[] {
+  //   const events = this.objCalendarObj ?? [];
+  //   return events.filter(event => this.isSameDay(event.start, day));
+  // }
+
+  getEventsForDay(day: Date): CalendarEvent[] {
+    const events = this.objCalendarObj ?? [];
+    return (events ?? []).filter(event => this.isSameDay(event.start, day));
+  }
+
+
+
+
 }
+

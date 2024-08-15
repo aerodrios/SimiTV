@@ -62,12 +62,25 @@ export class ReplayEpisodeDialogComponent {
   ){
 
     this.adapter.setLocale('es-419'); 
-   
-    
+    const countEpisodes = this.data ? Object.keys(data).filter(key => key !== 'isEdit').length : 0;
 
-    if(data){
-      //this.dialogTitle = 'Edit Replay Episode';
+    if(data && countEpisodes == 1){
 
+      this.replayEpisodeForm = this.fb.group({
+        nameHost: [data[0].nameHost || '', Validators.required],
+        specialGuests: [data[0].specialGuests || '',Validators.required],
+        duration: [data[0].duration || '00:00', Validators.required],
+        id: [''],
+        comments: [data[0].comments || '', Validators.required],
+        dateReplayEpisode: [this.parseDateString(data[0].dateReplayEpisode.toString()) || new Date(), Validators.required],
+        numberReplayEpisode: [data[0].numberReplayEpisode || 0, Validators.required],
+        hourOriginal: [data[0].hourOriginal || '00:00', Validators.required],
+        dateOri: [this.parseDateString(data[0].dateOri.toString()) || new Date(), Validators.required],
+        nameProgram: [data[0].nameProgram || '', Validators.required],
+      });
+
+    }else if(data && countEpisodes > 1 )
+    {
       this.replayEpisodeForm = this.fb.group({
         nameHost: [data.nameHost || '', Validators.required],
         specialGuests: [data.specialGuests || '',Validators.required],
@@ -81,14 +94,8 @@ export class ReplayEpisodeDialogComponent {
         nameProgram: [data.nameProgram || '', Validators.required],
       });
 
-      console.log(data.dateOri.toString());
-      console.log(data.dateReplayEpisode.toString());
-
-   
-
     }else{
       this.dialogTitle = 'Add Replay Episode';
-
       this.replayEpisodeForm = this.fb.group({
         nameHost: ['', Validators.required],
         specialGuests: [ '',Validators.required],
@@ -102,7 +109,7 @@ export class ReplayEpisodeDialogComponent {
         nameProgram: ['', Validators.required],
       });
     }
-    this.onDateValueChanges();
+    
   }
 
   onNoClick(): void {
@@ -110,25 +117,12 @@ export class ReplayEpisodeDialogComponent {
   }
 
   onSaveClick(): void {
-
-   
-    //this.displayDate = moment(this.replayEpisodeForm.get('dateOri')?.value).format('DD-MM-YYYY HH:mm:ss');
-    console.log('Saving record with date:', this.replayEpisodeForm.get('dateOri')?.value);
-
-    this.displayDate = moment(this.replayEpisodeForm.get('dateOri')?.value).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
-    const momentObject = moment(this.replayEpisodeForm.get('dateOri')?.value, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
-    const momentObject2 = moment(this.displayDate, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
     
-    const dateObject = momentObject.toDate();
-    const dateObject2 = momentObject2.toDate();
+    const dateFormOri = moment(this.replayEpisodeForm.get('dateOri')?.value, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').toDate();
+    this.replayEpisodeForm.get('dateOri')?.setValue( dateFormOri, { emitEvent: false });
 
-    console.log('Saving record with date:', dateObject);
-    console.log('Saving record with date:', dateObject2);
-
-
-
-    this.replayEpisodeForm.get('dateOri')?.setValue( dateObject, { emitEvent: false });
-
+    const dateFormReplay = moment(this.replayEpisodeForm.get('dateReplayEpisode')?.value, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').toDate();
+    this.replayEpisodeForm.get('dateReplayEpisode')?.setValue( dateFormReplay, { emitEvent: false });
 
     if (this.replayEpisodeForm.valid) {
       this.dialogRef.close(this.replayEpisodeForm.value);
@@ -136,38 +130,8 @@ export class ReplayEpisodeDialogComponent {
   }
 
   parseDateString(dateString: string): Date {
-    
     const [day, month, year, hours, minutes, seconds] = dateString.split(/[- :]/).map(Number);
     return new Date(year, month - 1, day, hours, minutes, seconds);
-  }
-
-
-  onDateValueChanges(): void {
-    this.replayEpisodeForm.get('dateOri')?.valueChanges.subscribe(value => {
-      if (value) {
-       // Display format
-       this.displayDate = moment(value).format('DD-MM-YYYY HH:mm:ss');
-
-       // Save format
-       const saveFormat = moment(value).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
-       
-       // Optional: If you want to set the save format back into the form control
-       //this.replayEpisodeForm.get('dateOri')?.setValue(saveFormat, { emitEvent: false });
-      }
-    });
-
-    this.replayEpisodeForm.get('dateReplayEpisode')?.valueChanges.subscribe(value => {
-      if (value) {
-        const formattedDate = moment(value).format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
-        console.log('Formatted Date:', formattedDate);
-
-        // If you want to update the form control with the formatted date string
-        this.replayEpisodeForm.get('dateReplayEpisode')?.setValue(formattedDate, { emitEvent: false });
-      }
-    });
-
-
-
   }
 
 

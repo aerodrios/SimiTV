@@ -30,7 +30,8 @@
     </mat-form-field>
 
     <mat-form-field>
-  
+      
+      <mat-label>Date Origin Episode</mat-label>
       <mtx-datetimepicker #datetimePicker
                     [type]="type"
                     [mode]="mode"
@@ -68,6 +69,8 @@
       <input matInput [matDatepicker]="picker1" formControlName="dateReplayEpisode" id="dateReplayEpisode">
       <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
       <mat-datepicker #picker1></mat-datepicker> -->
+
+      <mat-label>Date Replay Episode</mat-label>
       <mtx-datetimepicker #datetimePicker
       [type]="type"
       [mode]="mode"
