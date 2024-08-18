@@ -10,7 +10,7 @@
 
 
 <mat-dialog-content class="mat-typography">
-  <h3>Develop across all platforms</h3>
+  <!-- <h3>Develop across all platforms</h3> -->
 
   <form [formGroup]="replayEpisodeForm">
 
@@ -64,12 +64,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      
-      <!-- <mat-label>Date Replay Episode</mat-label>
-      <input matInput [matDatepicker]="picker1" formControlName="dateReplayEpisode" id="dateReplayEpisode">
-      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-      <mat-datepicker #picker1></mat-datepicker> -->
-
+    
       <mat-label>Date Replay Episode</mat-label>
       <mtx-datetimepicker #datetimePicker
       [type]="type"
@@ -91,6 +86,15 @@
     <mat-form-field>
       <mat-label>Number Replay Episode</mat-label>
       <input matInput type="number" formControlName="numberReplayEpisode" id="numberReplayEpisode">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Channel TV</mat-label>
+      <mat-select formControlName="tvChannel" id="tvChannel">
+        <mat-option *ngFor="let tv of tvPrograms" [value]="tv.url">
+          {{ tv.name }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
  
     <mat-form-field class="full-width">

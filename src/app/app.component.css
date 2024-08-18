@@ -66,3 +66,18 @@
     color: white; /* Adjust according to your design */
   }
   
+
+
+/* CSS table panel */
+
+
+
+.full-screen-modal .mat-dialog-container {
+  padding: 1em;
+  width: 80%;
+  height: 80%;
+}
+
+
+
+

@@ -37,19 +37,8 @@ export class SrvFireStoreService {
         return {
           ...data,
           nameHost: decodeURIComponent(data.nameHost),
-
-          // formattedDateReplayEpisode: this.datePipe.transform(program.dateReplayEpisode, 'dd-MM-yyyy HH:mm:ss'),
-          // formattedDateOri: this.datePipe.transform(program.dateOri, 'dd-MM-yyyy HH:mm:ss')
-
-
-          // formattedDateReplayEpisode: this.datePipe.transform((data.dateReplayEpisode as Timestamp).toDate(), 'dd-MM-yyyy HH:mm:ss'),
-          // formattedDateOri: this.datePipe.transform((data.dateOri as Timestamp).toDate(), 'dd-MM-yyyy HH:mm:ss'),
-
           dateOri: this.datePipe.transform((data.dateOri as Timestamp).toDate(), 'dd-MM-yyyy HH:mm:ss'),
           dateReplayEpisode: this.datePipe.transform((data.dateReplayEpisode as Timestamp).toDate(), 'dd-MM-yyyy HH:mm:ss'),
-
-
-
         } as ReplayEpisode;
       }))
     );

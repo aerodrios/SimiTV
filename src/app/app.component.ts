@@ -1,15 +1,15 @@
 //inHouse
-import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef, AfterViewInit, inject, } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef, AfterViewInit, inject, OnInit, } from '@angular/core';
 import { Subject } from 'rxjs';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
-import {MatPaginator} from '@angular/material/paginator';
+import { MatTableDataSource} from '@angular/material/table';
+import { MatSort} from '@angular/material/sort';
+import { MatPaginator} from '@angular/material/paginator';
 import { DatePipe } from '@angular/common';
 
 // 3rd Party´s
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours,} from 'date-fns';
-import {CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView,} from 'angular-calendar';
+import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours,} from 'date-fns';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView,} from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
 //Configuration
 import { environment } from '../environments/environment';
@@ -17,7 +17,7 @@ import { SimiPrograms } from './interfaces/simi-programs';
 //Services
 import { SrvFireStoreService } from '../services/srv-fire-store.service';
 import { ReplayEpisode } from './interfaces/replay-episode';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ReplayEpisodeDialogComponent } from './components/replay-episode-dialog/replay-episode-dialog.component';
 
 
@@ -60,9 +60,12 @@ export class DialogContentExample {
     `,
   ],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit {
 
   @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
+
+  @ViewChild('asideModal') asideModal: TemplateRef<any>;
+  private dialogRef: MatDialogRef<any>;
 
   //Pruebas
   displayedColumns: string[] = ['nameProgram', 'nameHost', 'dateOri', 'specialGuests', 'actions'];
@@ -83,7 +86,6 @@ export class AppComponent implements AfterViewInit {
     action: string;
     event: CalendarEvent;
   };
-
   actions: CalendarEventAction[] = [
     {
       label: '<i class="fas fa-fw fa-pencil-alt"></i>',
@@ -101,9 +103,7 @@ export class AppComponent implements AfterViewInit {
       },
     },
   ];
-
   refresh = new Subject<void>();
-
   events: CalendarEvent[] = [
     {
       start: subDays(startOfDay(new Date()), 1),
@@ -144,30 +144,24 @@ export class AppComponent implements AfterViewInit {
       draggable: true,
     },
   ];
-
-
- 
-
   objCalendarObj : CalendarEvent[];
-
-
-
-
-
   activeDayIsOpen: boolean = true;
-
-
   allSimiTvPrograms: any;
 
-  constructor(private modal: NgbModal, private service: SrvFireStoreService, public dialog: MatDialog, private datePipe: DatePipe) {
-    this.getPrograms();
+  constructor(private modal: NgbModal, 
+              private service: SrvFireStoreService, 
+              public dialog: MatDialog, 
+              private datePipe: DatePipe, 
+              private dialogNewEp: MatDialog) {
     this.dataSource = new MatTableDataSource(this.allSimiTvPrograms);
   }
 
 
+  ngOnInit() {
+    this.getPrograms();
+  }
 
-
-  //Methods
+  //Methods Calendar
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
@@ -196,36 +190,10 @@ export class AppComponent implements AfterViewInit {
     this.handleEvent('Dropped or resized', event);
   }
 
-
-
-  // addEvent(): void {
-  //   this.events = [
-  //     ...this.events,
-  //     {
-  //       title: 'New event',
-  //       start: startOfDay(new Date()),
-  //       end: endOfDay(new Date()),
-  //       color: colors["red"],
-  //       draggable: true,
-  //       resizable: {
-  //         beforeStart: true,
-  //         afterEnd: true,
-  //       },
-  //     },
-  //   ];
-  // }
-
-  // deleteEvent(eventToDelete: CalendarEvent) {
-  //   this.events = this.events.filter((event) => event !== eventToDelete);
-  // }
-
   setView(view: CalendarView) {
     this.view = view;
   }
 
-
-
-  
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
@@ -234,15 +202,6 @@ export class AppComponent implements AfterViewInit {
     this.modalData = { event, action };
     this.modal.open(this.modalContent, { size: 'lg' });
   }
-
-
-
-
-
-
-
-
-
 
 
   //Connect DB FireBase
@@ -261,7 +220,8 @@ export class AppComponent implements AfterViewInit {
       this.objCalendarObj = this.convertReplayEpisodesToCalendarEventsV2(data);
     });
 
-    console.log(this.allSimiTvPrograms);
+    console.log(this.objCalendarObj);
+    this.setView(CalendarView.Month);
   }
 
   applyFilter(event: Event) {
@@ -273,50 +233,7 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-
-  // convertReplayEpisodesToCalendarEvents = (replayEpisodes: ReplayEpisode[]): CalendarEvent[] => {
-  //   return replayEpisodes.map(episode => {
-  //     return {
-  //       id: episode.id,
-  //       start: episode.dateOri,
-  //       end: episode.dateReplayEpisode,
-  //       title: episode.nameProgram,
-  //       color: { ...colors["red"] },
-  //       actions: [
-  //         {
-  //           label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-  //           a11yLabel: 'Edit',
-  //           onClick: ({ event }: { event: CalendarEvent }): void => {
-  //             this.handleEvent('Edited', event);
-  //           },
-  //         },
-  //         {
-  //           label: '<i class="fas fa-fw fa-trash-alt"></i>',
-  //           a11yLabel: 'Delete',
-  //           onClick: ({ event }: { event: CalendarEvent }): void => {
-  //             this.events = this.events.filter((iEvent) => iEvent !== event);
-  //             this.handleEvent('Deleted', event);
-  //           },
-  //         },
-  //       ],
-  //       allDay: true,
-  //       resizable: {
-  //         beforeStart: true,
-  //         afterEnd: true,
-  //       },
-  //       draggable: true,
-  //       meta: {
-  //       //   hostname: episode.nameHost,
-  //       //   numberReplayEpisode: episode.numberReplayEpisode,
-  //       //   comments: episode.comments,
-  //       //   specialGuests: episode.specialGuests,
-  //       //   isEdit: episode.isEdit
-  //       }
-  //     } as CalendarEvent<ReplayEpisode>;
-  //   });
-  // };
-
-   convertReplayEpisodesToCalendarEventsV2 = (replayEpisodes: ReplayEpisode[]): CalendarEvent<ReplayEpisode>[] => {
+  convertReplayEpisodesToCalendarEventsV2 = (replayEpisodes: ReplayEpisode[]): CalendarEvent<ReplayEpisode>[] => {
     return replayEpisodes.map(episode => {
 
         return {
@@ -356,7 +273,7 @@ export class AppComponent implements AfterViewInit {
           specialGuests: episode.specialGuests,
           isEdit: episode.isEdit
         },
-        imageUrl: './../../assets/azteca1.png'
+        imageUrl: './../../assets/' + episode.tvChannel
       } as CalendarEvent<ReplayEpisode>;
     });
   };
@@ -366,10 +283,6 @@ export class AppComponent implements AfterViewInit {
     // this.dataSource.paginator = this.paginator;
     // this.dataSource.sort = this.sort;
   }
-
-
-
-
 
 ///////////////////////////////// Modal 
 
@@ -388,7 +301,6 @@ export class AppComponent implements AfterViewInit {
 
   openEditDialog(episode: any): void {
     const dialogRef = this.dialog.open(ReplayEpisodeDialogComponent, {
-      width: '700px',
       data: { ...episode, isEdit: true }
     });
 
@@ -432,7 +344,7 @@ export class AppComponent implements AfterViewInit {
     return new Date(year, month - 1, day, hours, minutes, seconds);
   }
 
-   convertToDate = (dateString: string): Date => {
+  convertToDate = (dateString: string): Date => {
     const [datePart, timePart] = dateString.split(' ');
     const [day, month, year] = datePart.split('-').map(Number);
     const [hours, minutes, seconds] = timePart.split(':').map(Number);
@@ -448,22 +360,45 @@ export class AppComponent implements AfterViewInit {
   hasEvents(day: Date): boolean {
     return this.objCalendarObj?.some(event => this.isSameDay(day, event.start));
   }
+
   isSameDay(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear() &&
            date1.getMonth() === date2.getMonth() &&
            date1.getDate() === date2.getDate();
   }
-  
-  // getEventsForDay(day: Date): CalendarEvent[] {
-  //   const events = this.objCalendarObj ?? [];
-  //   return events.filter(event => this.isSameDay(event.start, day));
-  // }
 
-  getEventsForDay(day: Date): CalendarEvent[] {
-    const events = this.objCalendarObj ?? [];
-    return (events ?? []).filter(event => this.isSameDay(event.start, day));
+  // Function to check if the specific day matches either the start or end date of the event
+  isEventOnDay(event: CalendarEvent, day: Date): boolean {
+    const start = new Date(event.start);
+    const end = event.end ? new Date(event.end) : start; // Use start date if end is not provided
+
+    return this.isSameDay(start, day) || this.isSameDay(end, day);
   }
 
+  // Function to get events for a specific day
+  getEventsForDay(day: Date): CalendarEvent[] {
+    const events = this.objCalendarObj ?? [];
+    return (events ?? []).filter(event => this.isEventOnDay(event, day));
+  }
+  
+///////////////////////////////// New Modal 
+
+
+openAsideModal(): void {
+  this.dialogRef = this.dialog.open(this.asideModal, {
+    maxWidth: '100vw',
+    maxHeight: '100vh',
+    height: '80%',
+    width: '80%',
+    panelClass: 'full-screen-modal'
+  });
+}
+
+close(): void {
+  if (this.dialogNewEp) {
+    this.dialogRef.close();
+  }
+}
 
 
 

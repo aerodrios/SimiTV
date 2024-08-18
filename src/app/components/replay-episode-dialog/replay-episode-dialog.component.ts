@@ -9,6 +9,7 @@ import { SimiPrograms } from '../../interfaces/simi-programs';
 import { ReplayEpisode } from '../../interfaces/replay-episode';
 import { MtxCalendarView, MtxDatetimepickerMode, MtxDatetimepickerType,  } from '@ng-matero/extensions/datetimepicker';
 import moment from 'moment';
+import { TvPrograms } from '../../interfaces/tv-programs';
 
 @Component({
   selector: 'app-replay-episode-dialog',
@@ -34,7 +35,15 @@ export class ReplayEpisodeDialogComponent {
     { id: 6, name: 'SimiPlaneta' },
     { id: 7, name: 'ReencuentroconMéxico' }
   ];
-    
+  
+  tvPrograms: TvPrograms[] = [
+    { id: 1, name: 'Azteca 1', url: 'azteca1.png' },
+    { id: 2, name: 'Azteca 7', url: 'azteca7.png' },
+    { id: 3, name: 'Estrellas', url: 'estrellas.png'},
+    { id: 4, name: 'ImagenTv', url: 'imagentv.png' },
+  ];
+
+
   //****************** Datetime Control */
   type: MtxDatetimepickerType = 'datetime';
   mode: MtxDatetimepickerMode = 'auto';
@@ -77,10 +86,12 @@ export class ReplayEpisodeDialogComponent {
         hourOriginal: [data[0].hourOriginal || '00:00', Validators.required],
         dateOri: [this.parseDateString(data[0].dateOri.toString()) || new Date(), Validators.required],
         nameProgram: [data[0].nameProgram || '', Validators.required],
+        tvChannel: [data[0].tvChannel || '', Validators.required]
       });
 
     }else if(data && countEpisodes > 1 )
     {
+      this.dialogTitle = 'Edit Episode';
       this.replayEpisodeForm = this.fb.group({
         nameHost: [data.nameHost || '', Validators.required],
         specialGuests: [data.specialGuests || '',Validators.required],
@@ -92,6 +103,7 @@ export class ReplayEpisodeDialogComponent {
         hourOriginal: [data.hourOriginal || '00:00', Validators.required],
         dateOri: [this.parseDateString(data.dateOri.toString()) || new Date(), Validators.required],
         nameProgram: [data.nameProgram || '', Validators.required],
+        tvChannel: [data.tvChannel || '', Validators.required]
       });
 
     }else{
@@ -107,6 +119,7 @@ export class ReplayEpisodeDialogComponent {
         hourOriginal: [ '', Validators.required],
         dateOri: [ new Date(), Validators.required],
         nameProgram: ['', Validators.required],
+        tvChannel: ['' , Validators.required]
       });
     }
     

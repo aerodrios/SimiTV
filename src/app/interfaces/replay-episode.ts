@@ -10,4 +10,5 @@ export interface ReplayEpisode {
     specialGuests: string;
     dateOri: Date;
     duration: string;
+    tvChannel: string;
   }
