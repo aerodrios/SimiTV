@@ -27,13 +27,13 @@ export class ReplayEpisodeDialogComponent {
 
   // Programs array
   programs: SimiPrograms[] = [
-    { id: 1, name: 'SimiActualidad' },
-    { id: 2, name: 'ActosdeBondad' },
-    { id: 3, name: 'SimiTrabajando' },
-    { id: 4, name: 'LaVidaesLucha' },
-    { id: 5, name: 'Ayudaresvivir' },
-    { id: 6, name: 'SimiPlaneta' },
-    { id: 7, name: 'ReencuentroconMéxico' }
+    { id: 1, name: 'Simi actualidad' },
+    { id: 2, name: 'Actos de bondad' },
+    { id: 3, name: 'Simi trabajando' },
+    { id: 4, name: 'La vida es lucha' },
+    { id: 5, name: 'Ayudar es vivir' },
+    { id: 6, name: 'Simi planeta' },
+    { id: 7, name: 'Reencuentro con México' }
   ];
   
   tvPrograms: TvPrograms[] = [

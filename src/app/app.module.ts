@@ -47,6 +47,10 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 import localeEs from '@angular/common/locales/es';
 import localeEsExtra from '@angular/common/locales/extra/es';
+import { CalendarComponent } from './components/calendar/calendar.component';
+import { LoginComponent } from './components/login/login.component';
+import { AuthGuard } from './guards/auth.guard';
+import { AuthService } from '../services/auth.service';
 
 registerLocaleData(localeEs, 'es-419', localeEsExtra);
 
@@ -54,7 +58,9 @@ registerLocaleData(localeEs, 'es-419', localeEsExtra);
 @NgModule({
   declarations: [
     AppComponent,
-    ReplayEpisodeDialogComponent
+    ReplayEpisodeDialogComponent,
+    CalendarComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -100,6 +106,8 @@ registerLocaleData(localeEs, 'es-419', localeEsExtra);
     MtxDateFnsDatetimeModule,       
   ],
   providers: [ SrvFireStoreService, 
+    AuthGuard,
+    AuthService,
     { provide: MAT_DATE_LOCALE, useValue: 'es-419' }, 
     { provide: LOCALE_ID, useValue: "es-419" }, 
     DatePipe,

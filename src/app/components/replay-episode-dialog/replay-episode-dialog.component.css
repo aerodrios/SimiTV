@@ -23,11 +23,12 @@ h2.mat-dialog-title {
 /* Button styles */
 button[mat-button] {
   min-width: 64px;
+  color: white;
+  border: 2px solid #3f51b5;
 }
 
 button[mat-button].save-button {
   background-color: #3f51b5;
-  color: white;
 }
 
 button[mat-button].save-button:hover {
@@ -35,7 +36,12 @@ button[mat-button].save-button:hover {
 }
 
 button[mat-button].cancel-button {
-  color: #f44336;
+  color: #3f51b5;
+  background-color: #B4C8EA;
+}
+
+button[mat-button].save-button:disabled {
+  background: #dddddd;
 }
 
 
