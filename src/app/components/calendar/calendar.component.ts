@@ -9,7 +9,7 @@ import { DatePipe } from '@angular/common';
 // 3rd Party´s
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours,} from 'date-fns';
-import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView,} from 'angular-calendar';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView, collapseAnimation} from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
 //Configuration
 import { environment } from '../../../environments/environment';
@@ -22,6 +22,8 @@ import { ReplayEpisodeDialogComponent } from '../../components/replay-episode-di
 
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+
+import moment from 'moment';
 
 
 //CONSTS
@@ -61,6 +63,7 @@ export class DialogContentExample {
       }
     `,
   ],
+  animations: [collapseAnimation]
 })
 
 
@@ -153,9 +156,12 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     },
   ];
 
+  selectEvents: ReplayEpisode[];
+
   objCalendarObj : CalendarEvent[];
   activeDayIsOpen: boolean = true;
   allSimiTvPrograms: any;
+  selectDate = new Date();
 
   constructor(private modal: NgbModal, 
     private service: SrvFireStoreService, 
@@ -169,23 +175,63 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
 
     ngOnInit() {
+      this.activeDayIsOpen = false;
       this.getPrograms();
     }
 
     //Methods Calendar
-    dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
-      if (isSameMonth(date, this.viewDate)) {
-        if (
-          (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
-          events.length === 0
-        ) {
-          this.activeDayIsOpen = false;
-        } else {
+    // dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+    //   if (isSameMonth(date, this.viewDate)) {
+    //     if (
+    //       (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
+    //       events.length === 0
+    //     ) {
+    //       this.activeDayIsOpen = false;
+    //     } else {
+    //       this.activeDayIsOpen = true;
+    //     }
+    //     this.viewDate = date;
+    //   }
+    // }
+
+    dayClicked(
+          { date, events }: { date: Date; events: CalendarEvent[] }
+        ): void {
+
+      this.selectEvents = [];
+      this.selectDate = new Date(date); // Example independent date
+
+      if(events.length > 0){
+
+       let eventsOri = this.dataSource.data.filter( e => {
+        const startDate = moment(e.dateOri, 'DD-MM-YYYY HH:mm:ss').toDate(); 
+          const DateStringStart = moment(startDate).format('ddd MMM DD YYYY');
+          const endDate = moment(e.dateReplayEpisode, 'DD-MM-YYYY HH:mm:ss').toDate();  
+          const DateStringEnd = moment(endDate).format('ddd MMM DD YYYY');
+          const independentDateString = this.selectDate.toDateString();
+        
+          return DateStringStart === independentDateString || DateStringEnd === independentDateString;
+        });
+
+
+        if ( (this.isDateMatching( events[0].start, events[0].end,  date) )  ) {
+          if(this.activeDayIsOpen === true){
+            this.activeDayIsOpen = false; 
+          }else
           this.activeDayIsOpen = true;
+          this.selectEvents = eventsOri;
+        }else if(this.activeDayIsOpen === true){
+          this.activeDayIsOpen = false;
+        }else{
+          this.activeDayIsOpen = false;
         }
         this.viewDate = date;
       }
+      
     }
+
+
+
 
     eventTimesChanged({event, newStart, newEnd,}: CalendarEventTimesChangedEvent): void {
       this.events = this.events.map((iEvent) => {
@@ -213,7 +259,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
       this.modalData = { event, action };
       this.modal.open(this.modalContent, { size: 'lg' });
     }
-
 
     //Connect DB FireBase
     getPrograms() {
@@ -283,12 +328,43 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             numberReplayEpisode: episode.numberReplayEpisode,
             comments: episode.comments,
             specialGuests: episode.specialGuests,
-            isEdit: episode.isEdit
+            isEdit: episode.isEdit,
+            duration: episode.duration,
+            hourOriginal: episode.hourOriginal
           },
           imageUrl: './../../assets/' + episode.tvChannel
         } as CalendarEvent<ReplayEpisode>;
       });
     };
+
+
+    convertCalendarEventsToReplayEpisodes = (calendarEvents: CalendarEvent<ReplayEpisode>[]): ReplayEpisode[] => {
+      return calendarEvents.map(event => {
+        const meta = event.meta as ReplayEpisode;
+    
+        // Create an object with all ReplayEpisode properties
+        const replayEpisode = {
+          id: event.id,
+          hourOriginal: meta.hourOriginal, // Derive this value if needed
+          dateReplayEpisode: event.end || new Date(), // Handle missing 'end' date
+          nameProgram: event.title,
+          hostname: meta.nameHost || '', // Use the correct field 'hostname'
+          numberReplayEpisode: meta.numberReplayEpisode,
+          comments: meta.comments,
+          specialGuests: meta.specialGuests,
+          dateOri: event.start,
+          duration: meta.duration, // Derive if needed
+          tvChannel: event.imageUrl?.split('/').pop(), // Extract 'tvChannel' from the image URL
+          isEdit: meta.isEdit || false,
+        };
+    
+        // Cast to unknown first, then ReplayEpisode to satisfy TypeScript
+        return replayEpisode as unknown as ReplayEpisode;
+      });
+    };
+    
+    
+    
     
     ngAfterViewInit() {
     
@@ -396,20 +472,63 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
     isDateMatching(startDate: Date, endDate: Date, currentDay: Date): boolean {
       // Normalize the dates to ensure time is not a factor in comparison
-      const normalizeDate = (date: Date) =>
-        new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    
-      const normalizedStart = normalizeDate(startDate);
-      const normalizedEnd = normalizeDate(endDate);
-      const normalizedCurrent = normalizeDate(currentDay);
-    
-      // Check if currentDay matches either the start or end date
-      return (
-        normalizedStart.getTime() === normalizedCurrent.getTime() ||
-        normalizedEnd.getTime() === normalizedCurrent.getTime()
-      );
+      
+      if(currentDay != undefined){
+
+        const normalizeDate = (date: Date) =>
+          new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      
+        const normalizedStart = normalizeDate(startDate);
+        const normalizedEnd = normalizeDate(endDate);
+        const normalizedCurrent = normalizeDate(currentDay);
+      
+        // Check if currentDay matches either the start or end date
+        var prueba = (
+          normalizedStart.getTime() === normalizedCurrent.getTime() ||
+          normalizedEnd.getTime() === normalizedCurrent.getTime()
+        );
+  
+        return (
+          normalizedStart.getTime() === normalizedCurrent.getTime() ||
+          normalizedEnd.getTime() === normalizedCurrent.getTime()
+        );
+
+      }
+      
+      return false;
+
     }
 
+
+
+    isDateMatchingV2(startDate: Date, endDate: Date, currentDay: Date): boolean {
+      // Normalize the dates to ensure time is not a factor in comparison
+      
+      if(currentDay != undefined){
+
+        const normalizeDate = (date: Date) =>
+          new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      
+        const normalizedStart = normalizeDate(startDate);
+        const normalizedEnd = normalizeDate(endDate);
+        const normalizedCurrent = normalizeDate(currentDay);
+      
+        // Check if currentDay matches either the start or end date
+        var prueba = (
+          normalizedStart.getTime() === normalizedCurrent.getTime() ||
+          normalizedEnd.getTime() === normalizedCurrent.getTime()
+        );
+  
+        return (
+          normalizedStart.getTime() === normalizedCurrent.getTime() ||
+          normalizedEnd.getTime() === normalizedCurrent.getTime()
+        );
+
+      }
+      
+      return false;
+
+    }
 
   ///////////////////////////////// New Modal 
 

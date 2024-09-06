@@ -106,7 +106,7 @@
             <div *ngFor="let event of getEventsForDay(day.date)">
 
               <div *ngIf="isDateMatching(event.start, event.end, day.date)">
-                <a>dia: {{day.date | date: 'd'}}</a>
+                <!-- <a>dia: {{day.date | date: 'd'}}</a> -->
                 <img *ngIf="event.imageUrl" [src]="event.imageUrl" alt="Event Image" class="event-image">
               </div>
              
@@ -114,25 +114,51 @@
             
           </ng-template>
           
+
+          <ng-template #customOpenDayEventsTemplate
+                      let-day="day"  
+                      let-eventClicked="eventClicked" 
+                      let-isOpen="isOpen"
+                
+          >
+          
+            <div class="cal-open-day-events" [@collapse] *ngIf="isOpen">
+
+                  <div  *ngFor="let ev of objCalendarObj" 
+                        [ngClass]="ev?.cssClass" 
+                        mwlDraggable 
+                        [dropData]="{event: ev}" 
+                        [dragAxis]="{x: ev.draggable, y: ev.draggable}"
+                  >
+ 
+                  </div>
+
+                  <p *ngFor="let ev of selectEvents">
+                      <a (click)="openEditDialog(ev)"> {{ev.nameProgram}}</a>
+                  </p> 
+
+            </div>
+              
+          </ng-template>
        
           
           <!-- Custom template for open day events -->
       
-
           <mwl-calendar-month-view
-          *ngSwitchCase="CalendarView.Month"
-          [viewDate]="viewDate"
-          
-          [events]="objCalendarObj"
-          
-          [refresh]="refresh"
-          [activeDayIsOpen]="activeDayIsOpen"
-          (dayClicked)="dayClicked($event.day)"
-          (eventClicked)="handleEvent('Clicked', $event.event)"
-          (eventTimesChanged)="eventTimesChanged($event)"
-          [cellTemplate]="customCellTemplate"
-        >
-        </mwl-calendar-month-view>
+            *ngSwitchCase="CalendarView.Month"
+            [viewDate]="viewDate"
+            
+            [events]="objCalendarObj"
+            
+            [refresh]="refresh"
+            [activeDayIsOpen]="activeDayIsOpen"
+            (dayClicked)="dayClicked($event.day)"
+            (eventClicked)="handleEvent('Clicked', $event.event)"
+            (eventTimesChanged)="eventTimesChanged($event)"
+            [cellTemplate]="customCellTemplate"
+            [openDayEventsTemplate]="customOpenDayEventsTemplate"
+          >
+          </mwl-calendar-month-view>
 
 
           <!-- <mwl-calendar-month-view
