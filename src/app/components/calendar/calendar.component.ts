@@ -263,6 +263,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
       console.log(this.objCalendarObj);
       this.setView(CalendarView.Month);
+ 
     }
 
     applyFilter(event: Event) {
@@ -382,6 +383,8 @@ export class CalendarComponent implements OnInit, AfterViewInit {
                 icon: "success"
               });
         
+              this.refresh.next();
+
             }
           });
       
@@ -397,9 +400,42 @@ export class CalendarComponent implements OnInit, AfterViewInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.service.updateReplayEpisode(episode.id, result).then(() => {
-            this.getPrograms(); // Reload data after update
+
+          Swal.fire({
+            title: "¿Seguro que desea actualizar?",
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Guardar"
+          }).then((res) => {
+            if (res.isConfirmed) {
+
+              this.service.updateReplayEpisode(episode.id, result).then(() => {
+                this.getPrograms(); // Reload data after update
+                this.refresh.next();
+              });
+
+              Swal.fire({
+                title: "¡Guardado!",
+                text: "El registro ha sido actualizado correctamente",
+                icon: "success"
+              });
+              
+              if(this.activeDayIsOpen === true){
+                this.activeDayIsOpen = false; 
+              }else
+                this.activeDayIsOpen = true;
+              
+              if(this.activeDayIsOpen === true){
+                this.activeDayIsOpen = false;
+              }else
+              this.activeDayIsOpen = false;
+            
+            }
           });
+
         }
       });
     }
