@@ -11,8 +11,8 @@ import { CalendarComponent } from './components/calendar/calendar.component';
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' }
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login' }
 ];
 
 @NgModule({

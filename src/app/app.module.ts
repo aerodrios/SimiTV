@@ -1,7 +1,7 @@
 import { NgModule,  } from '@angular/core';
 import { MAT_DATE_LOCALE, MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
+import { CommonModule, DatePipe, HashLocationStrategy, LocationStrategy, registerLocaleData } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule} from '@angular/common/http'
@@ -133,6 +133,8 @@ registerLocaleData(localeEs, 'es-419', localeEsExtra);
       },
     }),
       
+    {provide: LocationStrategy, useClass: HashLocationStrategy}
+    
   ],
   bootstrap: [AppComponent],
  
