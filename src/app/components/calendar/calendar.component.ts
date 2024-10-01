@@ -317,8 +317,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
             duration: episode.duration,
             hourOriginal: episode.hourOriginal
           },
-          //imageUrl: './../../SimiTV/assets/' + episode.tvChannel
-          imageUrl: 'assets/' + episode.tvChannel
+          imageUrl: './../../SimiTV/assets/' + episode.tvChannel
         } as CalendarEvent<ReplayEpisode>;
       });
     };
