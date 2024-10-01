@@ -78,6 +78,30 @@
   height: 80%;
 }
 
+.divBtns{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+}
 
 
+.divBtnOp{
+  display: flex;
+}
 
+.divBtnOp > * {
+  margin: 2px;
+}
+
+
+button[mat-button].cancel-button {
+  color: #3f51b5;
+  background-color: #B4C8EA;
+}
+
+
+.aDaySelect{
+  color: white;
+  cursor: pointer;
+}

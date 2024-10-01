@@ -17,14 +17,14 @@
                 [(viewDate)]="viewDate"
                 (viewDateChange)="closeOpenMonthViewDay()"
               >
-                Previous
+                <mat-icon>arrow_back_ios</mat-icon>
               </div>
               <div
                 class="btn btn-outline-secondary"
                 mwlCalendarToday
                 [(viewDate)]="viewDate"
               >
-                Today
+                <mat-icon>home_pin</mat-icon> 
               </div>
               <div
                 class="btn btn-primary"
@@ -32,8 +32,8 @@
                 [view]="view"
                 [(viewDate)]="viewDate"
                 (viewDateChange)="closeOpenMonthViewDay()"
-              >
-                Next
+              > 
+              <mat-icon>arrow_forward_ios</mat-icon>
               </div>
             </div>
           </div>
@@ -44,15 +44,15 @@
           </div>
 
            <!-- Calendar Right Buttons -->
-          <div class="col-md-4">
-            <div class="btn-group">
-              <div
+          <div class="col-md-4 divBtns">
+            <div class="btn-groupc divBtnOp">
+              <!-- <div
                 class="btn btn-primary"
                 (click)="setView(CalendarView.Month)"
                 [class.active]="view === CalendarView.Month"
               >
                 Month
-              </div>
+              </div> -->
               
               <div
                 class="btn btn-primary"
@@ -65,9 +65,9 @@
               class="btn btn-primary"
               (click)="openDialog()"
             >
-              <mat-icon>add_notes</mat-icon>
+              <mat-icon>add_box</mat-icon>
             </div>
-
+ 
               <!-- <div
                 class="btn btn-primary"
                 (click)="setView(CalendarView.Week)"
@@ -106,7 +106,6 @@
             <div *ngFor="let event of getEventsForDay(day.date)">
 
               <div *ngIf="isDateMatching(event.start, event.end, day.date)">
-                <!-- <a>dia: {{day.date | date: 'd'}}</a> -->
                 <img *ngIf="event.imageUrl" [src]="event.imageUrl" alt="Event Image" class="event-image">
               </div>
              
@@ -119,7 +118,6 @@
                       let-day="day"  
                       let-eventClicked="eventClicked" 
                       let-isOpen="isOpen"
-                
           >
           
             <div class="cal-open-day-events" [@collapse] *ngIf="isOpen">
@@ -134,22 +132,19 @@
                   </div>
 
                   <p *ngFor="let ev of selectEvents">
-                      <a (click)="openEditDialog(ev)"> {{ev.nameProgram}}</a>
+                      <a class="aDaySelect" (click)="openEditDialog(ev)"> {{ev.nameProgram}} <mat-icon>event_repeat</mat-icon></a> 
                   </p> 
 
             </div>
               
           </ng-template>
        
-          
           <!-- Custom template for open day events -->
       
           <mwl-calendar-month-view
             *ngSwitchCase="CalendarView.Month"
-            [viewDate]="viewDate"
-            
+            [viewDate]="viewDate" 
             [events]="objCalendarObj"
-            
             [refresh]="refresh"
             [activeDayIsOpen]="activeDayIsOpen"
             (dayClicked)="dayClicked($event.day)"
@@ -160,38 +155,10 @@
           >
           </mwl-calendar-month-view>
 
-
-          <!-- <mwl-calendar-month-view
-          [viewDate]="viewDate"
-          [events]="events"
-          [activeDayIsOpen]="activeDayIsOpen"
-          [openDayEventsTemplate]="customOpenDayEvents"
-          (dayClicked)="dayClicked($event.day)">
-        </mwl-calendar-month-view>   -->
-        
-
-          <!-- <mwl-calendar-month-view
-
-            *ngSwitchCase="CalendarView.Month"
-            [events]="events"
-
-            [viewDate]="viewDate"
-            [activeDayIsOpen]="activeDayIsOpen"
-            (dayClicked)="dayClicked($event.day)"
-
-            [refresh]="refresh"
-  
-            [openDayEventsTemplate]="customOpenDayEvents"
-
-          >
-          </mwl-calendar-month-view> -->
-
           <mwl-calendar-week-view
             *ngSwitchCase="CalendarView.Week"
             [viewDate]="viewDate"
-
             [events]="objCalendarObj"
-            
             [refresh]="refresh"
             (eventClicked)="handleEvent('Clicked', $event.event)"
             (eventTimesChanged)="eventTimesChanged($event)"
@@ -201,9 +168,7 @@
           <mwl-calendar-day-view
             *ngSwitchCase="CalendarView.Day"
             [viewDate]="viewDate"
-
             [events]="objCalendarObj"
-            
             [refresh]="refresh"
             (eventClicked)="handleEvent('Clicked', $event.event)"
             (eventTimesChanged)="eventTimesChanged($event)"
@@ -299,10 +264,10 @@
                <td mat-cell *matCellDef="let row">
                  <div class="dvBtnAct">
                    <button mat-icon-button color="primary" (click)="openEditDialog(row)">
-                     <mat-icon>edit</mat-icon>
+                     <mat-icon>event_repeat</mat-icon>
                    </button>
                    <button mat-icon-button color="warn" (click)="deleteRecord(row.id)">
-                     <mat-icon>delete</mat-icon>
+                     <mat-icon>event_busy</mat-icon>
                    </button>
                  </div>
                </td>
@@ -327,7 +292,7 @@
 
   </mat-dialog-content>
   <mat-dialog-actions>
-    <button mat-button (click)="close()">Close</button>
+    <button mat-button (click)="close()" class="cancel-button">Close</button>
   </mat-dialog-actions> 
 </ng-template>
 

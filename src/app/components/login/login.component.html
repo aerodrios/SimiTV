@@ -4,22 +4,22 @@
       <h3 class="text-center mb-4">Login</h3>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group mb-3">
-          <label for="username">Username</label>
-          <input type="text" class="form-control" id="username" formControlName="username" placeholder="Enter username">
+          <label for="username">Usuario</label>
+          <input type="text" class="form-control" id="username" formControlName="username" placeholder="nombre">
           <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="text-danger">
-            Username is required
+            Usuario requerido
           </div>
         </div>
         <div class="form-group mb-3">
           <label for="password">Password</label>
-          <input type="password" class="form-control" id="password" formControlName="password" placeholder="Enter password">
+          <input type="password" class="form-control" id="password" formControlName="password" placeholder="password">
           <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger">
-            Password is required
+            Password requerido
           </div>
         </div>
         <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
         <div *ngIf="loginError" class="error">
-          Invalid username or password.
+          Usuario o Password Invalido
         </div>
       </form>
     </div>

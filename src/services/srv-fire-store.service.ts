@@ -18,16 +18,6 @@ export class SrvFireStoreService {
 
   constructor(private db: AngularFirestore, private datePipe: DatePipe) { }
 
-
-  // getAllPrograms() {
-  
-  //   return new Promise<any>((resolve)=> {
-  //     this.db.collection('simiTvPrograms').valueChanges({ idField: 'id' }).subscribe(users => resolve(users));
-  //   })
-  
-  // }
-
-
   getAllPrograms(): Observable<ReplayEpisode[]> {
     return this.db.collection('simiTvPrograms', ref => ref.orderBy('nameProgram'))
     .valueChanges({ idField: 'id' })
@@ -43,7 +33,6 @@ export class SrvFireStoreService {
       }))
     );
   }
-
 
   addReplayEpisode(replayEpisode: ReplayEpisode) {
     return this.db.collection('simiTvPrograms').add(replayEpisode);

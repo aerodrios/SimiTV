@@ -2,21 +2,18 @@
 <h2 mat-dialog-title>
   <div class="dialog-actions">
     <span class="dialog-title">{{dialogTitle}}</span>
-    <button mat-button class="cancel-button" (click)="onNoClick()">Cancel</button>
-    <button mat-button class="save-button" [disabled]="!replayEpisodeForm.valid" (click)="onSaveClick()">Save</button>
-    <!-- <button mat-button class="save-button" (click)="onSaveClick()">Save</button> -->
+    <button mat-button class="cancel-button" (click)="onNoClick()">Cancelar</button>
+    <button mat-button class="save-button" [disabled]="!replayEpisodeForm.valid" (click)="onSaveClick()">Guardar</button>
   </div>
 </h2>
 
 
 <mat-dialog-content class="mat-typography">
-  <!-- <h3>Develop across all platforms</h3> -->
-
+  
   <form [formGroup]="replayEpisodeForm">
 
-
     <mat-form-field>
-      <mat-label>Name Program</mat-label>
+      <mat-label>Nombre Programa</mat-label>
       <mat-select formControlName="nameProgram" id="nameProgram">
         <mat-option *ngFor="let program of programs" [value]="program.name">
           {{ program.name }}
@@ -25,13 +22,13 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Special Guests</mat-label>
+      <mat-label>Invitado Special</mat-label>
       <input matInput formControlName="specialGuests" id="specialGuests" placeholder="Guest">
     </mat-form-field>
 
     <mat-form-field>
       
-      <mat-label>Date Origin Episode</mat-label>
+      <mat-label>Fecha Episodio</mat-label>
       <mtx-datetimepicker #datetimePicker
                     [type]="type"
                     [mode]="mode"
@@ -49,23 +46,23 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Hour Original</mat-label>
+      <mat-label>Hora Episodio</mat-label>
       <input matInput formControlName="hourOriginal" id="hourOriginal" mask="00:00" placeholder="Hour">
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Duration</mat-label>
+      <mat-label>Duracion</mat-label>
       <input matInput formControlName="duration" id="duration" mask="00:00" placeholder="Date">
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Name Host</mat-label>
+      <mat-label>Nombre Presentador</mat-label>
         <input matInput formControlName="nameHost" id="nameHost" title="" placeholder="name">
     </mat-form-field>
 
     <mat-form-field>
     
-      <mat-label>Date Replay Episode</mat-label>
+      <mat-label>Fecha Repeticion Episodio</mat-label>
       <mtx-datetimepicker #datetimePicker
       [type]="type"
       [mode]="mode"
@@ -84,12 +81,12 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Number Replay Episode</mat-label>
-      <input matInput type="number" formControlName="numberReplayEpisode" id="numberReplayEpisode" placeholder="number">
+      <mat-label>Numero Repeticiones</mat-label>
+      <input matInput type="number" min="0" step="1" formControlName="numberReplayEpisode" id="numberReplayEpisode" placeholder="number">
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Channel TV</mat-label>
+      <mat-label>Canal de TV</mat-label>
       <mat-select formControlName="tvChannel" id="tvChannel">
         <mat-option *ngFor="let tv of tvPrograms" [value]="tv.url">
           {{ tv.name }}
@@ -98,10 +95,9 @@
     </mat-form-field>
  
     <mat-form-field class="full-width">
-      <mat-label>Comments</mat-label>
+      <mat-label>Comentarios</mat-label>
       <textarea matInput formControlName="comments" id="comments" placeholder="comments"></textarea>
     </mat-form-field>
-
 
   </form>
 

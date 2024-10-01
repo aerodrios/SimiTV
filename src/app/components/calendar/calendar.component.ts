@@ -25,6 +25,8 @@ import { AuthService } from '../../../services/auth.service';
 
 import moment from 'moment';
 
+import Swal from 'sweetalert2'
+
 
 //CONSTS
 const colors: Record<string, EventColor> = {
@@ -179,21 +181,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
       this.getPrograms();
     }
 
-    //Methods Calendar
-    // dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
-    //   if (isSameMonth(date, this.viewDate)) {
-    //     if (
-    //       (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
-    //       events.length === 0
-    //     ) {
-    //       this.activeDayIsOpen = false;
-    //     } else {
-    //       this.activeDayIsOpen = true;
-    //     }
-    //     this.viewDate = date;
-    //   }
-    // }
-
     dayClicked(
           { date, events }: { date: Date; events: CalendarEvent[] }
         ): void {
@@ -229,9 +216,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
       }
       
     }
-
-
-
 
     eventTimesChanged({event, newStart, newEnd,}: CalendarEventTimesChangedEvent): void {
       this.events = this.events.map((iEvent) => {
@@ -362,10 +346,7 @@ export class CalendarComponent implements OnInit, AfterViewInit {
         return replayEpisode as unknown as ReplayEpisode;
       });
     };
-    
-    
-    
-    
+        
     ngAfterViewInit() {
     
       // this.dataSource.paginator = this.paginator;
@@ -378,10 +359,32 @@ export class CalendarComponent implements OnInit, AfterViewInit {
       const dialogRef = this.dialog.open(ReplayEpisodeDialogComponent);
 
       dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.service.addReplayEpisode(result).then(() => {
-          this.dataSource.data = [...this.dataSource.data, result];
-        });
+        if (result) {
+
+          Swal.fire({
+            title: "¿Seguro que desea guardar?",
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Guardar"
+          }).then((res) => {
+            if (res.isConfirmed) {
+
+              this.service.addReplayEpisode(result).then(() => {
+                this.dataSource.data = [...this.dataSource.data, result];
+              });
+
+              Swal.fire({
+                title: "¡Guardado!",
+                text: "El registro ha sido guardado correctamente",
+                icon: "success"
+              });
+        
+            }
+          });
+      
       }
       });
 
@@ -420,11 +423,39 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
 
     deleteRecord(id: string): void {
-      this.service.deleteReplayEpisode(id).then(() => {
-        this.getPrograms(); // Reload data after delete
-      }).catch(error => {
-        console.error('Error deleting record: ', error);
+
+
+      Swal.fire({
+        title: "¿Estas seguro que deseas eliminarlo?",
+        text: "",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Eliminar"
+      }).then((result) => {
+
+        if (result.isConfirmed) {
+
+          this.service.deleteReplayEpisode(id).then(() => {
+            this.getPrograms(); // Reload data after delete
+          }).catch(error => {
+            console.error('Error deleting record: ', error);
+          });
+
+          Swal.fire({
+            title: "Borrado!",
+            text: "El registro, ha sido eliminado",
+            icon: "success"
+          });
+        }
       });
+
+      
+    
+    
+    
+    
     }
 
     parseDateString(dateString: string): Date {
@@ -443,7 +474,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
       const date = new Date(dateString);
       return date.getDate(); // Returns the day of the month (1-31)
     }
-
     
     hasEvents(day: Date): boolean {
       return this.objCalendarObj?.some(event => this.isSameDay(day, event.start));
@@ -469,7 +499,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
       return (events ?? []).filter(event => this.isEventOnDay(event, day));
     }
     
-
     isDateMatching(startDate: Date, endDate: Date, currentDay: Date): boolean {
       // Normalize the dates to ensure time is not a factor in comparison
       
@@ -498,8 +527,6 @@ export class CalendarComponent implements OnInit, AfterViewInit {
       return false;
 
     }
-
-
 
     isDateMatchingV2(startDate: Date, endDate: Date, currentDay: Date): boolean {
       // Normalize the dates to ensure time is not a factor in comparison
@@ -549,8 +576,24 @@ export class CalendarComponent implements OnInit, AfterViewInit {
     }
   }
 
-
   logout(): void {
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+    Toast.fire({
+      icon: "success",
+      title: "LogOut correcto"
+    });
+
     this.authService.logout();
     this.router.navigate(['/login']);
   }

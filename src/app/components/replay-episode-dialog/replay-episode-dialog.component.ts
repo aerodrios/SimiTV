@@ -43,7 +43,6 @@ export class ReplayEpisodeDialogComponent {
     { id: 4, name: 'ImagenTv', url: 'imagentv.png' },
   ];
 
-
   //****************** Datetime Control */
   type: MtxDatetimepickerType = 'datetime';
   mode: MtxDatetimepickerMode = 'auto';
@@ -91,7 +90,7 @@ export class ReplayEpisodeDialogComponent {
 
     }else if(data && countEpisodes > 1 )
     {
-      this.dialogTitle = 'Edit Episode';
+      this.dialogTitle = 'Actualizar Episodio';
       this.replayEpisodeForm = this.fb.group({
         nameHost: [data.nameHost || '', Validators.required],
         specialGuests: [data.specialGuests || '',Validators.required],
@@ -107,7 +106,7 @@ export class ReplayEpisodeDialogComponent {
       });
 
     }else{
-      this.dialogTitle = 'Add Replay Episode';
+      this.dialogTitle = 'Nuevo Episodio';
       this.replayEpisodeForm = this.fb.group({
         nameHost: ['', Validators.required],
         specialGuests: [ '',Validators.required],
